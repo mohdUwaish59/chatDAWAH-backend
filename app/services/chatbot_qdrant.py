@@ -161,12 +161,13 @@ Relevant Information:
 User Question: {user_question}
 
 Instructions:
-- Answer based on the provided information
+- Answer based on the provided information and context only
 - Provide comprehensive, detailed responses when the question requires it
 - If the information doesn't fully answer the question, say so
 - Synthesize information from multiple sources when relevant
 - Maintain the tone and style of the knowledge base
 - Use examples and explanations where helpful
+- Never give any reference from quran
 
 Answer:"""
         
