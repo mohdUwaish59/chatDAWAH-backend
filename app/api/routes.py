@@ -102,3 +102,21 @@ async def stats():
     except Exception as e:
         print(f"❌ DEBUG: Error getting stats: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/config", tags=["System"])
+async def get_config():
+    """
+    Get current configuration settings
+    This allows frontend to use backend configuration dynamically
+    """
+    return {
+        "top_k": settings.TOP_K,
+        "max_tokens": settings.MAX_TOKENS,
+        "temperature": settings.TEMPERATURE,
+        "similarity_threshold": settings.SIMILARITY_THRESHOLD,
+        "llm_provider": settings.LLM_PROVIDER,
+        "model": settings.OPENAI_MODEL if settings.LLM_PROVIDER == "openai" else settings.HUGGINGFACE_MODEL,
+        "embedding_model": settings.EMBEDDING_MODEL,
+        "collection_name": settings.COLLECTION_NAME
+    }

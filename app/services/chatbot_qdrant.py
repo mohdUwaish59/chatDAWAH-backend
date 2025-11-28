@@ -82,22 +82,35 @@ class ChatbotService:
         print("Generating embeddings and uploading to Qdrant...")
         
         instructions = [item['instruction'] for item in self.data]
-        outputs = [item['output'] for item in self.data]
         
         # Generate embeddings in batches
         embeddings = list(self.embedding_model.embed(instructions))
         
         # Create points for Qdrant
         points = []
-        for idx, (instruction, output, embedding) in enumerate(zip(instructions, outputs, embeddings)):
+        for idx, (item, embedding) in enumerate(zip(self.data, embeddings)):
+            # Build payload with all available data
+            payload = {
+                "instruction": item['instruction'],
+                "output": item['output']
+            }
+            
+            # Add optional metadata if available
+            if 'channel_username' in item and item['channel_username']:
+                payload['channel_username'] = item['channel_username']
+            if 'video_id' in item and item['video_id']:
+                payload['video_id'] = item['video_id']
+            if 'input' in item and item['input']:
+                payload['input'] = item['input']
+            
+            # Add source identifier
+            payload['source'] = item.get('source', 'data.json')
+            
             points.append(
                 PointStruct(
                     id=idx,
                     vector=embedding.tolist(),
-                    payload={
-                        "instruction": instruction,
-                        "output": output
-                    }
+                    payload=payload
                 )
             )
         
@@ -133,11 +146,21 @@ class ChatbotService:
         context_items = []
         for result in search_results:
             if result.score >= settings.SIMILARITY_THRESHOLD:
-                context_items.append({
+                item = {
                     'instruction': result.payload['instruction'],
                     'output': result.payload['output'],
                     'similarity': result.score
-                })
+                }
+                
+                # Add optional metadata if available
+                if 'channel_username' in result.payload:
+                    item['channel_username'] = result.payload['channel_username']
+                if 'video_id' in result.payload:
+                    item['video_id'] = result.payload['video_id']
+                if 'source' in result.payload:
+                    item['source'] = result.payload['source']
+                
+                context_items.append(item)
         
         return context_items
     

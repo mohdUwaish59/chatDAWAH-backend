@@ -44,7 +44,7 @@ class Settings(BaseSettings):
     TEMPERATURE: float = 0.7
     
     # Retrieval Settings
-    TOP_K: int = 5
+    TOP_K: int = 10
     SIMILARITY_THRESHOLD: float = 0.3
     
     # Qdrant Settings
