@@ -120,3 +120,29 @@ async def get_config():
         "embedding_model": settings.EMBEDDING_MODEL,
         "collection_name": settings.COLLECTION_NAME
     }
+
+
+@router.get("/debug/versions", tags=["Debug"])
+async def debug_versions():
+    """
+    Get installed package versions for debugging
+    Useful for troubleshooting deployment issues
+    """
+    try:
+        import qdrant_client
+        import fastembed
+        import openai
+        import sys
+        
+        return {
+            "python_version": sys.version,
+            "qdrant_client": qdrant_client.__version__,
+            "fastembed": fastembed.__version__,
+            "openai": openai.__version__,
+            "has_search_method": hasattr(qdrant_client.QdrantClient, 'search')
+        }
+    except Exception as e:
+        return {
+            "error": str(e),
+            "message": "Failed to get version information"
+        }
