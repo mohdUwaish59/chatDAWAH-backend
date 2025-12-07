@@ -1,14 +1,14 @@
 # Core
-fastapi
-uvicorn
-pydantic
-pydantic-settings
+fastapi==0.115.0
+uvicorn[standard]==0.32.1
+pydantic==2.10.3
+pydantic-settings==2.6.1
 
 # AI/ML
-openai
-qdrant-client
-fastembed
+openai==1.54.0
+qdrant-client==1.12.1
+fastembed==0.4.2
 
 # Utilities
-python-dotenv
-httpx
+python-dotenv==1.0.0
+httpx==0.27.2
