@@ -207,14 +207,14 @@ async def test_search(
         # Generate query embedding
         query_embedding = list(embedding_model.embed([query]))[0]
         
-        # Search
-        results = qdrant_client.search(
+        # Search using query_points (official API)
+        search_response = qdrant_client.query_points(
             collection_name=collection_name,
-            query_vector=query_embedding.tolist(),
+            query=query_embedding.tolist(),
             limit=3
         )
         
-        for i, result in enumerate(results, 1):
+        for i, result in enumerate(search_response.points, 1):
             print(f"\n{i}. Score: {result.score:.4f}")
             print(f"   Instruction: {result.payload['instruction'][:100]}...")
             print(f"   Source: {result.payload.get('source', 'unknown')}")

@@ -136,15 +136,15 @@ class ChatbotService:
         # Generate embedding for the query
         query_embedding = list(self.embedding_model.embed([user_question]))[0]
         
-        # Search in Qdrant
-        search_results = self.qdrant_client.search(
+        # Search in Qdrant using query_points (official API)
+        search_response = self.qdrant_client.query_points(
             collection_name=settings.COLLECTION_NAME,
-            query_vector=query_embedding.tolist(),
+            query=query_embedding.tolist(),
             limit=top_k
         )
         
         context_items = []
-        for result in search_results:
+        for result in search_response.points:
             if result.score >= settings.SIMILARITY_THRESHOLD:
                 item = {
                     'instruction': result.payload['instruction'],
